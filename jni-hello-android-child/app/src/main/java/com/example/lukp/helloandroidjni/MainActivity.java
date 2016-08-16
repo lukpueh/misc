@@ -2,6 +2,7 @@ package com.example.lukp.helloandroidjni;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.os.Process;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,9 +37,26 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-        getMsgFromJni();
         Log.i("Main", String.format("PID: %d", android.os.Process.myPid()));
 
+        Intent intent = new Intent(getBaseContext(), MyService.class);
+        startService(intent);
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                //getMsgFromJni();
+//                for (int i = 0; i < 10; i++) {
+//                    try {
+//                        MySingleton.getInstance().shared.add(String.format("Parent - PID: %d", android.os.Process.myPid()));
+//                        Thread.sleep(160);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                Log.i("Activity", MySingleton.getInstance().shared.toString());
+//            }
+//        }).start();
 
     }
 
@@ -60,26 +80,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    static {
-        System.loadLibrary("hello-android-jni");
-    }
-    public native String getMsgFromJni();
-    // new code done
-
-    public static void callFromJni(){
-        Log.i("Main", String.format("Look a child is calling - PID %d",
-                android.os.Process.myPid()));
-
-        Log.i("Main", "Let's try some monkey business, while the parent's outta town");
-
-        ContentResolver content_resolver;
-        content_resolver = ctx.getContentResolver();
-        boolean airplane_mode = (android.provider.Settings.System
-                .getString(content_resolver,
-                        Settings.Global.AIRPLANE_MODE_ON)  ==
-                Settings.Global.AIRPLANE_MODE_ON);
-
     }
 }
