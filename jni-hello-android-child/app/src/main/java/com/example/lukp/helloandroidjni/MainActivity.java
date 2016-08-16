@@ -1,5 +1,6 @@
 package com.example.lukp.helloandroidjni;
 
+import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.os.Process;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -39,8 +43,47 @@ public class MainActivity extends AppCompatActivity {
         });
         Log.i("Main", String.format("PID: %d", android.os.Process.myPid()));
 
-        Intent intent = new Intent(getBaseContext(), MyService.class);
-        startService(intent);
+//        Intent intent = new Intent(getBaseContext(), MyService.class);
+//        startService(intent);
+
+        Class clazz;
+        Object obj;
+        try {
+            clazz = Class.forName("android.os.Process");
+            Method m = clazz.getMethod("start", new Class[] {String.class,
+                String.class, int.class, int.class, int[].class,
+                int.class, int.class, int.class, String.class,
+                String.class, String.class, String.class,
+                String[].class});
+
+            final String processClass = "FunkyProcess";
+            final String niceName = "myreallyfunkproc";
+            int uid = Process.myUid();
+            int gid = Process.getGidForName("com.sensibility_testbed");
+            int[] gids = null;
+            int debugFlags = 1;
+            int mountExternal = 0;
+            int targetSdkVersion = 23;
+            String seInfo = null;
+            String abi = "armeabi";
+            String instructionSet = null;
+            String appDataDir = null;
+            String[] zygoteArgs = null;
+
+            obj = m.invoke(null, new Object[] {processClass, niceName, uid, gid, gids, debugFlags,
+                    mountExternal, targetSdkVersion, seInfo, abi,  instructionSet, appDataDir,
+                    zygoteArgs});
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
 
 //        new Thread(new Runnable() {
 //            @Override

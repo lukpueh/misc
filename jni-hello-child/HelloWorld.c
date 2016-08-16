@@ -25,6 +25,7 @@ Java_HelloWorld_goNative(JNIEnv *env, jobject obj)
     JNIEnv *jni_env;
     jclass class;
     jmethodID method;
+
     (*cached_vm)->AttachCurrentThread(cached_vm,(void**) &jni_env, NULL);
     class = (*jni_env)->FindClass(jni_env, "HelloWorld");
     method = (*jni_env)->GetStaticMethodID(jni_env, class, "goJava", "()V");
@@ -35,6 +36,7 @@ Java_HelloWorld_goNative(JNIEnv *env, jobject obj)
 
       int status;
       waitpid(pid, &status, 0);
+      printf("Parent returns.\n");
   }
 
   return;
