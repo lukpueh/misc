@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
         });
         getMsgFromJni();
         Log.i("Main", String.format("PID: %d", android.os.Process.myPid()));
-
-
+        Log.i("Main", "Calling evil code from java");
+        callEvil();
     }
 
     @Override
@@ -68,6 +68,19 @@ public class MainActivity extends AppCompatActivity {
     public native String getMsgFromJni();
     // new code done
 
+    public void callEvil(){
+        Log.i("Main", String.format("Look a child is calling - PID %d",
+                android.os.Process.myPid()));
+
+        Log.i("Main", "We have a cooooontext");
+
+        ContentResolver content_resolver;
+        content_resolver = getApplicationContext().getContentResolver();
+        android.provider.Settings.System
+                .getString(content_resolver, Settings.Global.AIRPLANE_MODE_ON);
+
+    }
+
     public static void callFromJni(){
         Log.i("Main", String.format("Look a child is calling - PID %d",
                 android.os.Process.myPid()));
@@ -76,10 +89,8 @@ public class MainActivity extends AppCompatActivity {
 
         ContentResolver content_resolver;
         content_resolver = ctx.getContentResolver();
-        boolean airplane_mode = (android.provider.Settings.System
-                .getString(content_resolver,
-                        Settings.Global.AIRPLANE_MODE_ON)  ==
-                Settings.Global.AIRPLANE_MODE_ON);
+        android.provider.Settings.System
+                .getString(content_resolver, Settings.Global.AIRPLANE_MODE_ON);
 
     }
 }

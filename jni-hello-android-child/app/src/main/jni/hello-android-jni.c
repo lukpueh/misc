@@ -18,15 +18,7 @@ Java_com_example_lukp_helloandroidjni_MainActivity_getMsgFromJni(JNIEnv *env, jo
     if (pid == 0) {
 
         LOGI("Child PID - %i", getpid());
-        jclass class = (*env)->FindClass(env, "com/example/lukp/helloandroidjni/MainActivity");
-        jmethodID method = (*env)->GetStaticMethodID(env, class, "callFromJni",
-                                                     "()V");
-        (*env)->CallStaticVoidMethod(env, class, method);
-
-//        while (1) {
-//            LOGI("Child busy sleeping forever");
-//            sleep(5);
-//        }
+        return(*env)->NewStringUTF(env, "Hello From Jni");
 
     } else {
         LOGI("Parent PID - %i", getpid());
