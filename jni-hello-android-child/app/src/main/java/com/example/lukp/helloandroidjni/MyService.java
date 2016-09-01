@@ -10,82 +10,45 @@ import android.provider.Settings;
 import android.util.Log;
 
 public class MyService extends Service {
-    static Context app_context;
+    static String TAG = "Service";
 
-    static {
-        System.loadLibrary("hello-android-jni");
+    public void start_service(int iterations, Class service_class) {
+
+        //Get free service
+
+        Log.i(TAG, String.format("Before start Service PID: %d", android.os.Process.myPid()));
+        Intent intent = new Intent(getBaseContext(), service_class);
+        intent.putExtra("iterations", iterations);
+        startService(intent);
+        Log.i(TAG, String.format("After start Service PID: %d", android.os.Process.myPid()));
+
     }
-    public native String getMsgFromJni();
-    // new code done
 
-    public static void callFromJni(){
-        Log.i("Main", String.format("Look a child is calling - PID %d",
-                android.os.Process.myPid()));
-        Log.i("Main", "Let's try some monkey business, while the parent's outta town");
-
-        ContentResolver content_resolver;
-        AudioManager audio_manager;
-
-        content_resolver = app_context.getContentResolver();
-
-        audio_manager = (AudioManager)app_context.getSystemService(
-                app_context.AUDIO_SERVICE);
-
-
-        while(true) {
-            Log.i("LocalService", String.format("PID: %d", android.os.Process.myPid()));
-            Boolean airplane_mode = (android.provider.Settings.System
-                    .getString(content_resolver,
-                            Settings.Global.AIRPLANE_MODE_ON) ==
-                    Settings.Global.AIRPLANE_MODE_ON);
-            Integer ringer_mode = audio_manager.getRingerMode();
-
-
-            Log.i("Ringer Mode", ringer_mode.toString());
-            Log.i("Airplane Mode", airplane_mode.toString());
-
-
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-
+    public void do_service_stuff(int iterations) throws InterruptedException {
+        for (int i = 0; i < iterations; i++){
+            Log.i(TAG, String.format("PID: %d, Iteration: %d",  android.os.Process.myPid(), i));
+            Thread.sleep(1000);
         }
-
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("LocalService", "Received start id " + startId + ": " + intent);
-//        app_context = getBaseContext();
-//        Intent intent2 = new Intent(getBaseContext(), com.example.lukp.helloandroidjni.MyService.class);
-//        startService(intent2);
+        Log.i(TAG, "Received start id " + startId + ": " + intent);
+        int iterations = intent.getIntExtra("iterations", 10);
+        try {
+            do_service_stuff(iterations);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.i(TAG, String.format("Stopping service PID: %d", android.os.Process.myPid()));
 
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //getMsgFromJni();
-
-                Log.i("Service", String.format("Child - PID: %d", android.os.Process.myPid()));
-
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
-
+        stopSelf();
         return START_NOT_STICKY;
     }
 
+
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return null;
     }
 }

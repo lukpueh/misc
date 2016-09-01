@@ -20,10 +20,15 @@
         </activity>
 
         <service
-            android:name=".MyService"
+            android:name=".MyService1"
             android:enabled="true"
             android:exported="false"
-            android:process=":myfunkyprocess"></service>
+            android:process=":proc1"></service>
+        <service
+            android:name=".MyService2"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":proc2"></service>
     </application>
 
 </manifest>
