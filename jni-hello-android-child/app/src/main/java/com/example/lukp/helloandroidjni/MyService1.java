@@ -6,10 +6,4 @@ package com.example.lukp.helloandroidjni;
 
 public class MyService1 extends MyService {
     static String TAG = "Service1";
-
-    public void do_service_stuff(int iterations) throws InterruptedException {
-        super.do_service_stuff(iterations);
-
-        start_service(5, MyService2.class);
-    }
 }

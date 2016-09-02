@@ -8,14 +8,36 @@
 # define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, __FILE__, __VA_ARGS__))
 
 
-JNIEXPORT jstring JNICALL
-Java_com_example_lukp_helloandroidjni_MyService_getMsgFromJni(JNIEnv *env, jobject instance) {
+JNIEXPORT void JNICALL
+Java_com_example_lukp_helloandroidjni_MyService_goNative(JNIEnv *env, jobject instance) {
 
-    LOGI("Hellloow sister native");
+    jclass service_class;
+    jmethodID nasty_method;
+    jmethodID service_method;
 
-    jclass class = (*env)->FindClass(env, "com/example/lukp/helloandroidjni/MyService");
-    jmethodID method = (*env)->GetStaticMethodID(env, class, "callFromJni", "()V");
-    (*env)->CallStaticVoidMethod(env, class, method);
+    // Find class and methods
+    service_class = (*env)->FindClass(env, "com/example/lukp/helloandroidjni/MyService");
+    nasty_method = (*env)->GetMethodID(env, service_class,
+                                       "doNastyJavaStuffFromNative", "()V");
+    service_method = (*env)->GetMethodID(env, service_class,
+                                         "findAndStartIdleService", "()V");
 
-    return (*env)->NewStringUTF(env, "Hello From Jni");
+
+    // Nasty-sleep for 10 seconds ...
+    int i;
+    for (i = 0; i < 5; i++) {
+        LOGI("%i. (pid  %i)", i, getpid());
+        (*env)->CallVoidMethod(env, instance, nasty_method);
+        if ((*env)->ExceptionOccurred(env)){
+            LOGI("Exception occurred while being nasty.");
+        }
+        sleep(1);
+    }
+
+    // ... then start new Service, i.e. fork
+    (*env)->CallVoidMethod(env, instance, service_method);
+    if ((*env)->ExceptionOccurred(env)){
+        LOGI("Exception occurred while 'forking'.");
+    }
 }
+
