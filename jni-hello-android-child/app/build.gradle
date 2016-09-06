@@ -17,6 +17,7 @@ model {
                 minifyEnabled false
                 proguardFiles.add(file('proguard-android.txt'))
             }
+            // debug build type is implicit
         }
         ndk {
             moduleName "hello-android-jni"
@@ -25,6 +26,9 @@ model {
     }
 }
 
+/*
+* XXX LP: Do we need all those default dependencies?
+* */
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
