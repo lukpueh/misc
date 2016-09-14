@@ -80,9 +80,13 @@ Java_com_example_lukp_helloandroidjni_MyService_goNative(JNIEnv *env, jobject in
 //    }
 
     // And now for something completely different (Python)
+    Py_SetPythonHome("/data/user/0/com.google.sample.helloandroidjni/files/python/");
+
     Py_Initialize();
     PyEval_InitThreads();
     Py_InitModule("androidlog", AndroidLogMethods);
+
+
 
     LOGI("PyRun returns %i\n", Verbose_PyRun_SimpleString(
             "import sys\n" \
@@ -101,13 +105,35 @@ Java_com_example_lukp_helloandroidjni_MyService_goNative(JNIEnv *env, jobject in
             "sys.stdout = sys.stderr = LogFile()"));
 
 
-    LOGI("PyRun returns %i\n", Verbose_PyRun_SimpleString(
-            "print 'the larch, THEEE LAAARCH'"));
-//            "print 'the larch, THEEE LAAARCH'\n"\
+
+
+
+    int i;
+    for (i = 0; i < 5; i++) {
+        LOGI( "PyRun returns %i\n", Verbose_PyRun_SimpleString(
+                "import sys\n" \
+                "print sys.path\n" \
+                "import os\n" \
+                "print os.getpid()\n" \
+                "try:\n" \
+                "  import ctypes\n" \
+                "except Exception, e:\n" \
+                "  print 'Could not import ctypes'\n" \
+                "else:\n" \
+                "  print 'Imported ctypes'\n" \
+                "\n" \
+                "\n" \
+                "try:\n" \
+                "  import _ctypes\n" \
+                "except Exception, e:\n" \
+                "  print 'Could not import _ctypes'\n" \
+                "else:\n" \
+                "  print 'Imported _ctypes'\n"
+                "print 'the larch'"));
+//                "print 'the larch, THEEE LAAARCH'\n"\
 //            "import os\n"\
 //            "print 'PID: ' + str(os.getpid())"));
-
-
+    }
 
 
     // ... then start new Service, i.e. fork
