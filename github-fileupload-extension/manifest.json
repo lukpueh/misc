@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "GitHub file select logger Chrome Extension",
+  "description": "nomen est omen",
+  "version": "1.0",
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": ["jquery.min.js", "log-file-select.js"]
+    }
+  ],
+  "permissions": [
+    "activeTab",
+    "https://ajax.googleapis.com/"
+  ]
+}
