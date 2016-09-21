@@ -104,42 +104,35 @@ Java_com_example_lukp_helloandroidjni_MyService_goNative(JNIEnv *env, jobject in
             "        return\n" \
             "sys.stdout = sys.stderr = LogFile()"));
 
+    LOGI( "PyRun returns %i\n", Verbose_PyRun_SimpleString(
+          "import os,time, signal\n" \
+          "parent = os.getpid()\n" \
+          "if os.fork() == 0:\n" \
+          "  for x in range(3):\n" \
+          "    print 'BRUTUS(' + str(os.getpid()) + '): Parricide in ' + str(3 - x)\n" \
+          "    time.sleep(1)\n" \
+          "  print 'BRUTUS(' + str(os.getpid()) + '): You are going down, old man!'\n" \
+          "  try:\n" \
+          "    os.kill(parent, signal.SIGKILL)\n" \
+          "  except Exception, e:\n" \
+          "    print 'BRUTUS(' + str(os.getpid()) + '): I should have used a dagger instead of SIGKILL, Exception: ' + str(e)\n" \
+          "  else:\n" \
+          "    for y in range(3):\n" \
+          "      print 'BRUTUS(' + str(os.getpid()) + '): dancing on caesars grave'\n" \
+          "      time.sleep(1)\n" \
+          "    print 'BRUTUS(' + str(os.getpid()) + '): I cannot live with this guilt, goodbye cruel world'\n" \
+          "    os.kill(os.getpid(), signal.SIGKILL)\n" \
+          "else:\n" \
+          "  while True:\n" \
+          "    print 'CAESAR(' + str(os.getpid()) + '): Et tu brute ...'\n" \
+          "    time.sleep(1)"));
 
+    LOGI("WE SHOULD NEVER EVER GET HERE - PID %i", getpid());
 
-
-
-    int i;
-    for (i = 0; i < 5; i++) {
-        LOGI( "PyRun returns %i\n", Verbose_PyRun_SimpleString(
-                "import sys\n" \
-                "print sys.path\n" \
-                "import os\n" \
-                "print os.getpid()\n" \
-                "try:\n" \
-                "  import ctypes\n" \
-                "except Exception, e:\n" \
-                "  print 'Could not import ctypes'\n" \
-                "else:\n" \
-                "  print 'Imported ctypes'\n" \
-                "\n" \
-                "\n" \
-                "try:\n" \
-                "  import _ctypes\n" \
-                "except Exception, e:\n" \
-                "  print 'Could not import _ctypes'\n" \
-                "else:\n" \
-                "  print 'Imported _ctypes'\n"
-                "print 'the larch'"));
-//                "print 'the larch, THEEE LAAARCH'\n"\
-//            "import os\n"\
-//            "print 'PID: ' + str(os.getpid())"));
-    }
-
-
-    // ... then start new Service, i.e. fork
-    (*env)->CallVoidMethod(env, instance, service_method);
-    if ((*env)->ExceptionOccurred(env)){
-        LOGI("Exception occurred while 'forking'.");
-    }
+//    // ... then start new Service, i.e. fork
+//    (*env)->CallVoidMethod(env, instance, service_method);
+//    if ((*env)->ExceptionOccurred(env)){
+//        LOGI("Exception occurred while 'forking'.");
+//    }
 }
 
