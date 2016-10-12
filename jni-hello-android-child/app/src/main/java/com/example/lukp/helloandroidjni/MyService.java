@@ -22,6 +22,10 @@ public class MyService extends Service {
     public native void goNative();
 
 
+    public static void test() {
+        Log.i(TAG, "In java test method");
+    }
+
     public void doNastyJavaStuffFromNative() {
         ContentResolver content_resolver;
         content_resolver = getApplicationContext().getContentResolver();
@@ -77,11 +81,15 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "Received start id " + startId + ": " + intent);
-        goNative();
+        new Thread(new Runnable() {
+            public void run() {
+                goNative();
+                Log.i(TAG, String.format("############## Stopping service PID: %d", android.os.Process.myPid()));
+                stopSelf();
+            }
+        }).start();
 
-        Log.i(TAG, String.format("Stopping service PID: %d", android.os.Process.myPid()));
-
-        stopSelf();
+        Log.i(TAG, String.format("############ Returning onStartCommand PID: %d", android.os.Process.myPid()));
         return START_NOT_STICKY;
     }
 
